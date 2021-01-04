@@ -1,0 +1,7 @@
+\documentclass{article}
+\usepackage{pdfpages}
+%\VignetteIndexEntry{SimVitD}
+
+\begin{document}
+\includepdf[pages=-, fitpaper=true]{SimVitD-vgnette.pdf}
+\end{document}
