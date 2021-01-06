@@ -12,5 +12,5 @@
 - Dependency on `poisson` package removed as it was possible to vectorize our own sampling.
 - Updated print and summary function for `exposure.levels` and `infection.count` objects.
 - Changes to package vignette to document user facing changes.
-
+- Just something extra
 
