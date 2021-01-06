@@ -1,0 +1,32 @@
+importFrom("grDevices", "rainbow")
+importFrom("graphics", "axis", "legend", "lines", "matplot", "points",
+             "title", "par", "boxplot", "abline", "plot")
+importFrom("stats", "coef", "rnorm", "rexp", "rgamma", "runif", "rbeta")
+importFrom("wBoot", "boot.two.bca")
+
+
+export(intensity.function)
+export(vitd.curve)
+export(exposure.levels)
+export(infection.count)
+export(power.calc)
+export(infection.count.plot)
+export(rr.curve.plot)
+export(rr.profile.plot)
+
+S3method(plot, vitd.curve)
+S3method(summary, vitd.curve)
+S3method(print, vitd.curve)
+
+S3method(plot, exposure.levels)
+S3method(summary, exposure.levels)
+S3method(print, exposure.levels)
+
+S3method(summary, infection.count)
+S3method(print, infection.count)
+
+S3method(plot, power.calc)
+S3method(summary, power.calc)
+S3method(print, power.calc)
+
+
