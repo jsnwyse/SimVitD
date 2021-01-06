@@ -1,1 +1,0 @@
-print.vitd.curve <- function( x, ...  ){ summary(x) }
