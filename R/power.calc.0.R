@@ -30,7 +30,7 @@ power.calc.0 <- function( idx, n, ratio, N, test.type, sig.level,
                            sd.dyn.dose.thresh = pl$sd.dyn.dose.thresh, supp.dose = pl$supp.dose, supp.dose.rate = pl$supp.dose.rate,
                            weight = pl$weight, sd.weight = pl$sd.weight, min.thresh = pl$min.thresh, north.hemi = pl$north.hemi)
     
-    placebo.levels <- exposure.levels( placebo, rate, intensity.func = intensity.func, end )
+    placebo.levels <- exposure.levels( placebo, rate, intensity.func = intensity.func, start, end )
     
     x.pl <- infection.count( placebo.levels, baseline, rel.risk, holding.time, lohi.vit=lohi.vit )$count
     
@@ -39,7 +39,7 @@ power.calc.0 <- function( idx, n, ratio, N, test.type, sig.level,
                          sd.dyn.dose.thresh = tr$sd.dyn.dose.thresh, supp.dose = tr$supp.dose, supp.dose.rate = tr$supp.dose.rate,
                          weight = tr$weight, sd.weight = tr$sd.weight, min.thresh = tr$min.thresh, north.hemi = tr$north.hemi)
     
-    treat.levels <- exposure.levels( treat, rate,intensity.func = intensity.func, end )
+    treat.levels <- exposure.levels( treat, rate,intensity.func = intensity.func, start, end )
     
     x.tr <- infection.count( treat.levels, baseline, rel.risk, holding.time, lohi.vit=lohi.vit )$count
     

@@ -59,3 +59,4 @@ vitd.curve <- function( n = 1, type = c("placebo","fixed-dose","dynamic-dose"), 
   return( y )
   
 }
+

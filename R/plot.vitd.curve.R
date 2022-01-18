@@ -1,4 +1,4 @@
-plot.vitd.curve <- function( x, main = " ", xlab = " ", ylab = "25 Hydroxy Vitamin D", col=1:6, add = FALSE, ylim = NULL, ... ){
+plot.vitd.curve <- function( x, main = " ", xlab = " ", ylab = "25-hydroxyvitamin D", col=1:6, add = FALSE, ylim = NULL, ... ){
   time <- ( x[[1]] ) / ( 12 / pi )
   if( add ) 
   {
@@ -7,7 +7,7 @@ plot.vitd.curve <- function( x, main = " ", xlab = " ", ylab = "25 Hydroxy Vitam
   }
   if( is.null(ylim) ) ylim <- c(0,min(125,max(x[[2]][[1]]+10)))
   matplot( time, t(x[[2]][[1]]), type="l", col=col, main=main, xlab=xlab, ylab=ylab, axes=FALSE, ylim = ylim, ... )
-  axis( 2, ... )
+  axis( side = 2,   ... )
   year <- ( length(x[[1]]) - 1 ) / (x$res * 12)
   
   if( year < 1 )

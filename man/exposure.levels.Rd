@@ -9,13 +9,14 @@
 }
 
 \usage{
-  exposure.levels( x, rate, intensity.func = intensity.function(), end = 1 )
+  exposure.levels( x, rate, intensity.func = intensity.function(), start = 0, end = 1 )
 }
 
 \arguments{
   \item{x}{An object of class \code{vitd.curve}.}
   \item{rate}{Expected number of exposures per week, the rate at which exposures occur in an equivalent homogeneous Poisson process.}
   \item{intensity.func}{A function that takes time as sole argument and returns value between 0 and 1, scaling the rate argument. For example, exposures may be higher at certain times for seasonal infections.}
+  \item{start}{Start time of the study in units of years.}
   \item{end}{End time of study in units of years.}
   }
 

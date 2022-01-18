@@ -5,7 +5,7 @@
   Plot vitamin D status curves.
   }
 \usage{
-  \method{plot}{vitd.curve}( x, main = " ", xlab = " ", ylab = "25 Hydroxy Vitamin D", 
+  \method{plot}{vitd.curve}( x, main = " ", xlab = " ", ylab = "25-hydroxyvitamin D", 
     col=1:6, add = FALSE, ylim = NULL, \dots )
 }
 \arguments{

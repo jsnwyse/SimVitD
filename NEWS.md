@@ -1,4 +1,13 @@
-# SimVitD 1.0 
+# SimVitD 1.0.1
+
+## Minor changes
+
+- Added extra argument `start` to `exposure.levels()` to pass the time unit in years of study start
+- Corrected bug in time offset of exposure levels when start > 0
+- Changed default plotting label for 25OHD from '25 Hydroxy Vitamin D' to '25-hydroxyvitamin D'
+- Added new function 'vitd.curve.2.function' which will convert the output of vitd.curve into a list of callable functions (not available at user level)
+
+# SimVitD 1.0.0 
 
 ## Major changes
 

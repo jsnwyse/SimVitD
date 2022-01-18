@@ -1,6 +1,6 @@
 # expos is output from exposure levels
 # infect is output from infection.count
-rr.curve.plot <- function( expos, infect, idx=1, main = NULL, xlab = "25 Hydroxy Vitamin D",
+rr.curve.plot <- function( expos, infect, idx=1, main = NULL, xlab = "25-hydroxyvitamin D",
                            ylab = "Risk scaling", col = "blue", ... ){
    
   x <- expos

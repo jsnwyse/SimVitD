@@ -4,7 +4,7 @@
 \description{
   Plot the relative risk curve for vitamin D showing times of exposure and whether a participant developed infection from exposure.}
   \usage{
-    rr.curve.plot( expos, infect, idx = 1, main = NULL, xlab = "25 Hydroxy Vitamin D",
+    rr.curve.plot( expos, infect, idx = 1, main = NULL, xlab = "25-hydroxyvitamin D",
         ylab = "Risk scaling", col = "blue", \dots )
   }
   \arguments{
