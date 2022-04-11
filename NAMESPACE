@@ -1,4 +1,4 @@
-useDynLib(SimVitD, .registration = TRUE )
+useDynLib(SimVitD)
 
 importFrom("grDevices", "rainbow")
 importFrom("graphics", "axis", "legend", "lines", "matplot", "points",
