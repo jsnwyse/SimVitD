@@ -1,17 +1,3 @@
-/*Functions for the fitting of Latent Class Analysis models using MCMC
-	methods. Two implementations of the model are included in the Bayesian
-	formulation: collapsed and not collapsed.
-	
-	Author:	Jason Wyse,
-			School of Computer Science and Statistics,
-			Lloyd Institute,
-			Trinity College,
-			Dublin 2,
-			Ireland.
-			mailto: wyseja@tcd.ie
-			
-	Last modification of this code: Mon 09 May 2016 15:38:03 IST   */
-
 #ifndef __SIMVITD_REQUIRED_LIBS__
 #define __SIMVITD_REQUIRED_LIBS__
 
