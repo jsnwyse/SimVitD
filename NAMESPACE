@@ -1,3 +1,5 @@
+useDynLib(SimVitD, .registration = TRUE )
+
 importFrom("grDevices", "rainbow")
 importFrom("graphics", "axis", "legend", "lines", "matplot", "points",
              "title", "par", "boxplot", "abline", "plot")
@@ -13,6 +15,7 @@ export(power.calc)
 export(infection.count.plot)
 export(rr.curve.plot)
 export(rr.profile.plot)
+
 
 S3method(plot, vitd.curve)
 S3method(summary, vitd.curve)

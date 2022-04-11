@@ -2,7 +2,8 @@ power.calc <- function( n, ratio=1, N = 500, test.type, sig.level = 0.05,
                         vitdcurves.placebo = NULL, vitdcurves.treatment = NULL,
                         baseline = 0.03, RR = 3,
                         rate = 1, intensity.func = intensity.function(), 
-                        holding.time = 2, lohi.vit = c(10,70), mc.error = 1, boot.rep = 500, parallel = FALSE, num.cores = NULL, verbose=FALSE ){
+                        holding.time = 2, lohi.vit = c(10,70), clt = NULL, mc.error = 1, 
+                        boot.rep = 9999, parallel = FALSE, num.cores = NULL, verbose=FALSE ){
   
   placebo.group <- vitdcurves.placebo
   treatment.group <- vitdcurves.treatment
@@ -16,9 +17,27 @@ power.calc <- function( n, ratio=1, N = 500, test.type, sig.level = 0.05,
   if( any( baseline*RR > 1 ) ) stop("Argument 'RR' scales 'baseline' to probabilities greater than 1.")
   if( !( test.type %in% c('proportions','count') )) stop("Argument 'test.type' must be one of 'proportions','count'.")
   if( (!is.null(placebo.group) & class(placebo.group) != 'vitd.curve') | (!is.null(treatment.group) & class(treatment.group)!= 'vitd.curve' ) ) stop("Arguments 'vitdcurves.placebo' and 'vitdcurves.treatment' must be of class 'vitd.curve'.")
-  if( mc.error == 1 & parallel ) warning("Setting parallel equal to true will only impact scenarios where mc.error > 1.")
+  if( mc.error == 1 & parallel ){ message("Setting parallel equal to true will only impact scenarios where mc.error > 1."); parallel <- FALSE }
   
-  if( verbose & parallel ) cat("Printing progress updates is not possible with parallel set to TRUE.")
+  if( verbose & parallel ) message("Printing progress updates is not possible with parallel set to TRUE.")
+  
+  # put in a check here for sizes of n and print warning for clt approximation
+  clt <- if( !is.null(clt) )
+  {
+    if( length(clt) > 1 & length(clt) < length(n) ) stop("If argument clt is a vector, it must have the same length as n.")
+    if( length(clt) == 1 )
+    {
+      if( clt==FALSE & any(n >= 35) ) message("Some n values seem large: setting clt to TRUE may give a faster approximation than bootstrapping for these values.")
+      if( clt==TRUE & any(n < 35) ) message("Some n values seem small: a clt approximation may not give reliable results")
+      rep(clt,length(n))
+    }
+  }else{
+    # determine automatically
+    message("Power approximation (CLT or bootstrap) has been determined for each instance in n: these can be set using argument clt")
+    ap <- rep( TRUE, length(n) )
+    ap[ n < 35 ] <- FALSE
+    ap
+  }
   
   num.participants <- n
   num.sims <- N
@@ -27,7 +46,7 @@ power.calc <- function( n, ratio=1, N = 500, test.type, sig.level = 0.05,
   
   if( parallel & !is.null(num.cores) )
   {
-    # make sure parallelisation is sensible...  
+    # make sure parallelisation is sensible...
     if( num.cores >  mc.error ) num.cores <- mc.error
   }
   
@@ -37,58 +56,48 @@ power.calc <- function( n, ratio=1, N = 500, test.type, sig.level = 0.05,
   if( parallel )
   {
     cl <- parallel::makePSOCKcluster( num.cores )
-    parallel::clusterSetRNGStream( cl ) 
+    parallel::clusterSetRNGStream( cl )
   }
   
   curve.type <- c(placebo.group$type, treatment.group$type)
   
   pow.sim <- array( dim=c( length(RR), mc.error, length(num.participants) ) )
   eff.size <- array( dim=c( length(RR), mc.error, length(num.participants) ) )
-
-  for( iter in 1:length(num.participants) )
+  group1.mean <- array( dim=c( length(RR), mc.error, length(num.participants) ) )
+  group2.mean <- array( dim=c( length(RR), mc.error, length(num.participants) ) )
+  
+  for( iteration in 1:length(RR))
   {
-    ni <- num.participants[iter]
-    
-    if( verbose & !parallel ) cat("Beginning run for",ni,"participants: ")
-    
-    for( iteration in 1:length(RR) )
+    rel.risk <- RR[ iteration ]
+    if( parallel )
     {
-      
-      rel.risk <- RR[ iteration ]
-      
-      if( verbose & !parallel ) cat("\n\t... with RR =", rel.risk )
-      
-      if( parallel ){
-        # parallel implementation 
-        
-        powpara <- parallel::parLapplyLB( cl, 1:mc.error, power.calc.0, ni, ratio, num.sims, test.type, sig.level,
-                                          placebo.group, treatment.group,
-                                          baseline, rel.risk,
-                                          rate, intensity.func, 
-                                          holding.time, lohi.vit, boot.rep )
-        
-        for( r in seq_along(powpara) ) pow.sim[ iteration, r, iter ] <- powpara[[ r ]]$power
-        for( r in seq_along(powpara) ) eff.size[ iteration, r, iter ] <- powpara[[ r ]]$eff.size
-        
-      }else{
-        # not parallel- execute in sequence
-        for( r in 1:mc.error )
-        {
-          # need to incorporate the ratio into here...
-          powpara <- power.calc.0( 0, ni, ratio, num.sims, test.type, sig.level,
-                                   placebo.group, treatment.group,
-                                   baseline, rel.risk,
-                                   rate, intensity.func, 
-                                   holding.time, lohi.vit, boot.rep )
-          pow.sim[ iteration, r, iter ] <- powpara$power
-          eff.size[ iteration, r, iter ] <- powpara$eff.size
-        }
-        
+      powpara <- parallel::parLapplyLB( cl, 1:mc.error, power.calc.x, num.participants, ratio, num.sims, test.type, sig.level,
+                                        placebo.group, treatment.group,
+                                        baseline, rel.risk,
+                                        rate, intensity.func, 
+                                        holding.time, lohi.vit, boot.rep, verbose, clt )
+      for( r in seq_along(powpara) )
+      {
+        pow.sim[ iteration, r, ] <- powpara[[ r ]]$power
+        eff.size[ iteration, r, ] <- powpara[[ r ]]$eff.size
+        group1.mean[ iteration, r, ] <- powpara[[ r ]]$group.1
+        group2.mean[ iteration, r, ] <- powpara[[ r ]]$group.2
       }
-      
-      
+    }else{
+      for( r in 1:mc.error )
+      {
+        # need to incorporate the ratio into here...
+        powpara <- power.calc.x( 0, num.participants, ratio, num.sims, test.type, sig.level,
+                                 placebo.group, treatment.group,
+                                 baseline, rel.risk,
+                                 rate, intensity.func, 
+                                 holding.time, lohi.vit, boot.rep, verbose, clt )
+        pow.sim[ iteration, r,  ] <- powpara$power
+        eff.size[ iteration, r, ] <- powpara$eff.size
+        group1.mean[ iteration, r, ] <- powpara$group.1
+        group2.mean[ iteration, r, ] <- powpara$group.2
+      }
     }
-    if( verbose & !parallel ) cat("\n")
   }
   
   if( verbose & !parallel ) cat("All runs complete.")
@@ -96,8 +105,8 @@ power.calc <- function( n, ratio=1, N = 500, test.type, sig.level = 0.05,
   if( parallel ) parallel::stopCluster(cl)
   
   
-  y <- list( curve.type, test.type, baseline, RR, num.participants, mc.error, pow.sim, eff.size, ratio )
-  names( y ) <- c( "curve.type", "test.type", "baseline", "RR", "npergroup", "mc.error", "power", "eff.size", "ratio" )
+  y <- list( curve.type, test.type, baseline, RR, num.participants, mc.error, pow.sim, eff.size, group1.mean, group2.mean, ratio )
+  names( y ) <- c( "curve.type", "test.type", "baseline", "RR", "npergroup", "mc.error", "power", "eff.size", "group1.mean", "group2.mean", "ratio" )
   class( y ) <- "power.calc"
   return( y )
   

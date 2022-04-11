@@ -7,20 +7,11 @@ intensity.function <- function( summer.rate = 0, winter.rate = 1, flu = TRUE ){
     
     intensity <- function(t)
     {
-      intens <- numeric( length(t) )
-      
-      intens[ t <= pi/6 ] <- winter.rate
-      
-      a <- ( t - pi/6 )/( pi/12 )
-      
-      b <- floor(a) %% 12
-      
-      intens[ ( b < 4 ) & t > pi/6 ] <- summer.rate
-      
-      intens[ ( b >= 4 ) & t > pi/6  ] <- winter.rate
-      
-      return(intens)
-      
+      t <- 6 * ( t - floor(t/pi) * pi )
+      l <- (t <= pi ) * ( t >= 4*pi)
+      t[l] <- winter.rate
+      t[!l] <- summer.rate
+      return(t)
     }
     
   }else{
@@ -30,5 +21,7 @@ intensity.function <- function( summer.rate = 0, winter.rate = 1, flu = TRUE ){
       return( rep( winter.rate, length(t) ) )
     }
   }
+  
+  
   return( intensity )
 }

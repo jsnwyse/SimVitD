@@ -8,7 +8,7 @@
   power.calc( n, ratio=1, N = 500, test.type, sig.level = 0.05,
     vitdcurves.placebo = NULL, vitdcurves.treatment = NULL,
   	baseline = 0.03, RR = 3, rate = 1, intensity.func = intensity.function(), 
-  	holding.time = 2, lohi.vit = c(10,70), mc.error = 1, boot.rep = 500, 
+  	holding.time = 2, lohi.vit = c(10,70), clt = NULL, mc.error = 1, boot.rep = 500, 
   	parallel = FALSE, num.cores = NULL, verbose=FALSE )
 }
 \arguments{
@@ -37,6 +37,8 @@
   \item{holding.time}{Expected number of weeks for the holding time.}
   
   \item{lohi.vit}{Inflection points of the relative risk curve used in \code{infection.count}.}
+  
+  \item{clt}{Vector or single logical variable indicating whether Central Limit Theorem should be used to approximate the p-value.}
   
   \item{mc.error}{Number of times to repeat the experiment at each \code{n} value to explore Monte Carlo error.}
   
